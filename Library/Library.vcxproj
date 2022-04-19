@@ -177,6 +177,7 @@
     <ClInclude Include="Header\Audio.h" />
     <ClInclude Include="Header\BaseScene.h" />
     <ClInclude Include="Header\Camera.h" />
+    <ClInclude Include="Header\Color.h" />
     <ClInclude Include="Header\DebugText.h" />
     <ClInclude Include="Header\DirectDrawing.h" />
     <ClInclude Include="Header\DirectInput.h" />

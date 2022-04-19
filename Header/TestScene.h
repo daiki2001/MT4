@@ -12,8 +12,6 @@ public: // エイリアス
 public: // 定数
 	static const float sphereRadius; //球体オブジェクトの半径
 
-	static const XMFLOAT4 color; //オブジェクトの色
-
 	static const float gravity; //重力
 
 public: // メンバ関数
