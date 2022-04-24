@@ -12,7 +12,8 @@ public: // エイリアス
 public: // 定数
 	static const float sphereRadius; //球体オブジェクトの半径
 
-	static const float gravity; //重力
+	static const float gravity;  //重力
+	static const float friction; //摩擦係数
 
 public: // メンバ関数
 	TestScene(SceneChenger* sceneChenger);

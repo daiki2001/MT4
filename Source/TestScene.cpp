@@ -5,6 +5,7 @@
 
 const float TestScene::sphereRadius = 10.0f;
 const float TestScene::gravity = 9.8f;
+const float TestScene::friction = 0.89f;
 
 TestScene::TestScene(SceneChenger* sceneChenger) :
 	BaseScene(sceneChenger),
@@ -46,7 +47,7 @@ void TestScene::Init()
 	draw.SetCamera(Camera::pos, Camera::target, Camera::upVec);
 
 	playerInitPos = { -900.0f, -500.0f, 750.0f };
-	playerInitVel = { 10.0f, 15.0f, 0.0f };
+	playerInitVel = { 300.0f, 0.0f, 0.0f };
 
 	playerPos = playerInitPos;
 	playerVel = playerInitVel;
@@ -58,16 +59,17 @@ void TestScene::Update()
 	using namespace DirectX;
 	using namespace EngineMath;
 
+	playerPos += playerVel;
+	playerVel += playerAccel;
+	playerAccel.x = -playerVel.x * friction; //摩擦
+	//playerAccel.y = (-gravity / 60.0f) + (gravity / 60.0f); //重力と垂直抗力は等しい状態
+
 	if (Input::IsKey(DIK_R))
 	{
 		playerPos = playerInitPos;
 		playerVel = playerInitVel;
 		playerAccel = { 0.0f, 0.0f, 0.0f };
 	}
-
-	playerPos += playerVel;
-	playerVel += playerAccel;
-	playerAccel.y = -gravity / 60.0f;
 }
 
 void TestScene::Draw()
@@ -97,9 +99,9 @@ void TestScene::Draw()
 	draw.DrawString(0.0f, 40.0f * 0, 2.0f, Color::WHITE, "reset:R");
 #ifdef _DEBUG
 	draw.DrawTextrue(0.0f, 40.0f * (1 + 1), 320.0f, 40.0f * (2 + 1), 0.0f, 0, XMFLOAT2(0.0f, 0.0f), Color::BLACK);
-	draw.DrawString(0.0f, 40.0f * (0 + 2), 2.0f, Color::WHITE, "posY:%f", playerPos.y);
-	draw.DrawString(0.0f, 40.0f * (1 + 2), 2.0f, Color::WHITE, "velocityY:%f", playerVel.y);
-	draw.DrawString(0.0f, 40.0f * (2 + 2), 2.0f, Color::WHITE, "accelY:%f", playerAccel.y);
+	draw.DrawString(0.0f, 40.0f * (0 + 2), 2.0f, Color::WHITE, "posX:%f", playerPos.x);
+	draw.DrawString(0.0f, 40.0f * (1 + 2), 2.0f, Color::WHITE, "velocityX:%f", playerVel.x);
+	draw.DrawString(0.0f, 40.0f * (2 + 2), 2.0f, Color::WHITE, "accelX:%f", playerAccel.x);
 #endif // _DEBUG
 
 	// ループの終了処理
