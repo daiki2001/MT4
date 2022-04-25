@@ -146,11 +146,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header\Player.h" />
     <ClInclude Include="Header\TestScene.h" />
   </ItemGroup>
   <ItemGroup>

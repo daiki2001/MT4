@@ -47,7 +47,9 @@ void TestScene::Init()
 	draw.SetCamera(Camera::pos, Camera::target, Camera::upVec);
 
 	playerInitPos = { -900.0f, -500.0f, 750.0f };
-	playerInitVel = { 300.0f, 0.0f, 0.0f };
+	playerInitVel.x = 20.0f * cosf(1.0f);
+	playerInitVel.y = 20.0f * sinf(1.0f);
+	playerInitVel.z = 0.0f;
 
 	playerPos = playerInitPos;
 	playerVel = playerInitVel;
@@ -61,8 +63,10 @@ void TestScene::Update()
 
 	playerPos += playerVel;
 	playerVel += playerAccel;
-	playerAccel.x = -playerVel.x * friction; //ñÄéC
-	//playerAccel.y = (-gravity / 60.0f) + (gravity / 60.0f); //èdóÕÇ∆êÇíºçRóÕÇÕìôÇµÇ¢èÛë‘
+	playerAccel = -0.05f * playerVel;    //ãÛãCíÔçR
+	playerAccel.y += (-gravity / 60.0f); //èdóÕ
+	//playerAccel.x = -playerVel.x * friction; //ñÄéC
+	//playerAccel.y += (gravity / 60.0f);  //êÇíºçRóÕ(èdóÕÇ∆ìôÇµÇ¢èÛë‘)
 
 	if (Input::IsKey(DIK_R))
 	{
@@ -95,13 +99,16 @@ void TestScene::Draw()
 
 	draw.Draw(playerObject, playerPos, playerRota, scale_xyz(1.0f), Color::WHITE);
 
-	draw.DrawTextrue(0.0f, 0.0f, 120.0f, 40.0f * (1 + 1), 0.0f, 0, XMFLOAT2(0.0f, 0.0f), Color::BLACK);
+	draw.DrawTextrue(0.0f, 0.0f, 120.0f, 40.0f * (0 + 1), 0.0f, 0, XMFLOAT2(0.0f, 0.0f), Color::BLACK);
 	draw.DrawString(0.0f, 40.0f * 0, 2.0f, Color::WHITE, "reset:R");
 #ifdef _DEBUG
-	draw.DrawTextrue(0.0f, 40.0f * (1 + 1), 320.0f, 40.0f * (2 + 1), 0.0f, 0, XMFLOAT2(0.0f, 0.0f), Color::BLACK);
-	draw.DrawString(0.0f, 40.0f * (0 + 2), 2.0f, Color::WHITE, "posX:%f", playerPos.x);
-	draw.DrawString(0.0f, 40.0f * (1 + 2), 2.0f, Color::WHITE, "velocityX:%f", playerVel.x);
-	draw.DrawString(0.0f, 40.0f * (2 + 2), 2.0f, Color::WHITE, "accelX:%f", playerAccel.x);
+	draw.DrawTextrue(0.0f, 40.0f * (0 + 1), 320.0f, 40.0f * (5 + 1), 0.0f, 0, XMFLOAT2(0.0f, 0.0f), Color::BLACK);
+	draw.DrawString(0.0f, 40.0f * (0 + 1), 2.0f, Color::WHITE, "posX:%f", playerPos.x);
+	draw.DrawString(0.0f, 40.0f * (1 + 1), 2.0f, Color::WHITE, "posY:%f", playerPos.y);
+	draw.DrawString(0.0f, 40.0f * (2 + 1), 2.0f, Color::WHITE, "velocityX:%f", playerVel.x);
+	draw.DrawString(0.0f, 40.0f * (3 + 1), 2.0f, Color::WHITE, "velocityY:%f", playerVel.y);
+	draw.DrawString(0.0f, 40.0f * (4 + 1), 2.0f, Color::WHITE, "accelX:%f", playerAccel.x);
+	draw.DrawString(0.0f, 40.0f * (5 + 1), 2.0f, Color::WHITE, "accelY:%f", playerAccel.y);
 #endif // _DEBUG
 
 	// ÉãÅ[ÉvÇÃèIóπèàóù
