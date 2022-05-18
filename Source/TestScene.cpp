@@ -1,23 +1,22 @@
 #include "./Header/TestScene.h"
 #include "./Header/Input.h"
 #include "./Header/Camera.h"
+#include "./Math/Collision/Collision.h"
 #include "./Header/Color.h"
 
 const float TestScene::sphereRadius = 10.0f;
 const float TestScene::gravity = 9.8f;
+const float TestScene::airResistance = 0.005f;
 const float TestScene::friction = 0.89f;
 
 TestScene::TestScene(SceneChenger* sceneChenger) :
 	BaseScene(sceneChenger),
 	background(-1),
-	playerObject(-1),
-	playerPos{},
-	playerRota(EngineMath::Identity()),
-	playerVel{},
-	playerAccel{},
-	playerAddForce{},
-	playerInitPos{},
-	playerInitVel{}
+	playerObject{},
+	playerDrawObject(-1),
+	cubeObject{},
+	cubeDrawObject(-1),
+	isHit(false)
 {
 	Init();
 }
@@ -25,7 +24,7 @@ TestScene::TestScene(SceneChenger* sceneChenger) :
 void TestScene::Init()
 {
 	using namespace DirectX;
-	using namespace EngineMath;
+	using namespace Engine::Math;
 
 	// 画像の読み込み
 	if (background == -1)
@@ -34,9 +33,13 @@ void TestScene::Init()
 	}
 
 	// オブジェクトの生成
-	if (playerObject == -1)
+	if (playerDrawObject == -1)
 	{
-		playerObject = draw.CreateSphere(sphereRadius, 16);
+		playerDrawObject = draw.CreateSphere(sphereRadius, 16);
+	}
+	if (cubeDrawObject == -1)
+	{
+		cubeDrawObject = draw.CreateSphere(sphereRadius * 2, 6);
 	}
 
 	Camera::targetRadius = 150.0f;
@@ -46,42 +49,74 @@ void TestScene::Init()
 	Camera::upVec = { 0.0f, 1.0f, 0.0f };
 	draw.SetCamera(Camera::pos, Camera::target, Camera::upVec);
 
-	playerInitPos = { -900.0f, -500.0f, 750.0f };
-	playerInitVel.x = 20.0f * cosf(1.0f);
-	playerInitVel.y = 20.0f * sinf(1.0f);
-	playerInitVel.z = 0.0f;
+	playerObject.mass = 10.0f;
+	playerObject.initPos = { -600.0f, 0.0f, 500.0f };
+	playerObject.initVel = { 20.0f, 0.0f, 0.0f };
+	playerObject.pos = playerObject.initPos;
+	playerObject.vel = playerObject.initVel;
+	playerObject.accel = { 0.0f, 0.0f, 0.0f };
 
-	playerPos = playerInitPos;
-	playerVel = playerInitVel;
-	playerAccel = { 0.0f, 0.0f, 0.0f };
+	cubeObject.mass = 20.0f;
+	cubeObject.initPos = { 150.0f, 0.0f, 500.0f };
+	cubeObject.initVel = { -5.0f, 0.0f, 0.0f };
+	cubeObject.pos = cubeObject.initPos;
+	cubeObject.vel = cubeObject.initVel;
+	cubeObject.accel = { 0.0f, 0.0f, 0.0f };
 }
 
 void TestScene::Update()
 {
 	using namespace DirectX;
-	using namespace EngineMath;
+	using namespace Engine::Math;
 
-	playerPos += playerVel;
-	playerVel += playerAccel;
-	playerAccel = -0.05f * playerVel;    //空気抵抗
-	playerAccel.y += (-gravity / 60.0f); //重力
-	//playerAccel.x = -playerVel.x * friction; //摩擦
-	//playerAccel.y += (gravity / 60.0f);  //垂直抗力(重力と等しい状態)
+	playerObject.pos += playerObject.vel;
+	playerObject.vel += playerObject.accel;
+	playerObject.accel = -airResistance * playerObject.vel; //空気抵抗
+	//playerObject.accel.y += (-gravity / 60.0f);             //重力
+
+	cubeObject.pos += cubeObject.vel;
+	cubeObject.vel += cubeObject.accel;
+	cubeObject.accel = -airResistance * cubeObject.vel; //空気抵抗
 
 	if (Input::IsKey(DIK_R))
 	{
-		playerPos = playerInitPos;
-		playerVel = playerInitVel;
-		playerAccel = { 0.0f, 0.0f, 0.0f };
+		playerObject.pos = playerObject.initPos;
+		playerObject.vel = playerObject.initVel;
+		playerObject.accel = { 0.0f, 0.0f, 0.0f };
+
+		cubeObject.pos = cubeObject.initPos;
+		cubeObject.vel = cubeObject.initVel;
+		cubeObject.accel = { 0.0f, 0.0f, 0.0f };
+	}
+
+	isHit = Collision::IsSphereToSphereCollision(
+		Sphere(playerObject.pos, sphereRadius),
+		Sphere(cubeObject.pos, sphereRadius * 2)
+	);
+
+	if (isHit)
+	{
+		ConservationOfMomentum(&playerObject.vel, playerObject.mass,
+							   &cubeObject.vel, cubeObject.mass);
 	}
 }
 
 void TestScene::Draw()
 {
 	using namespace DirectX;
-	using namespace EngineMath;
+	using namespace Engine::Math;
 
+	static XMFLOAT4 objectColor = Color::WHITE;
 	DirectXInit* w = DirectXInit::GetInstance();
+
+	if (isHit)
+	{
+		objectColor = Color::RED;
+	}
+	else
+	{
+		objectColor = Color::WHITE;
+	}
 
 	w->ClearScreen();
 	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
@@ -97,18 +132,19 @@ void TestScene::Draw()
 		XMFLOAT2(0.0f, 0.0f)
 	);
 
-	draw.Draw(playerObject, playerPos, playerRota, scale_xyz(1.0f), Color::WHITE);
+	draw.Draw(playerDrawObject, playerObject.pos, playerObject.rota, scale_xyz(1.0f), objectColor);
+	draw.Draw(cubeDrawObject, cubeObject.pos, cubeObject.rota, scale_xyz(1.0f), objectColor);
 
 	draw.DrawTextrue(0.0f, 0.0f, 120.0f, 40.0f * (0 + 1), 0.0f, 0, XMFLOAT2(0.0f, 0.0f), Color::BLACK);
 	draw.DrawString(0.0f, 40.0f * 0, 2.0f, Color::WHITE, "reset:R");
 #ifdef _DEBUG
-	draw.DrawTextrue(0.0f, 40.0f * (0 + 1), 320.0f, 40.0f * (5 + 1), 0.0f, 0, XMFLOAT2(0.0f, 0.0f), Color::BLACK);
-	draw.DrawString(0.0f, 40.0f * (0 + 1), 2.0f, Color::WHITE, "posX:%f", playerPos.x);
-	draw.DrawString(0.0f, 40.0f * (1 + 1), 2.0f, Color::WHITE, "posY:%f", playerPos.y);
-	draw.DrawString(0.0f, 40.0f * (2 + 1), 2.0f, Color::WHITE, "velocityX:%f", playerVel.x);
-	draw.DrawString(0.0f, 40.0f * (3 + 1), 2.0f, Color::WHITE, "velocityY:%f", playerVel.y);
-	draw.DrawString(0.0f, 40.0f * (4 + 1), 2.0f, Color::WHITE, "accelX:%f", playerAccel.x);
-	draw.DrawString(0.0f, 40.0f * (5 + 1), 2.0f, Color::WHITE, "accelY:%f", playerAccel.y);
+	draw.DrawTextrue(0.0f, 40.0f * (0 + 1), 700.0f, 40.0f * (3 + 1), 0.0f, 0, XMFLOAT2(0.0f, 0.0f), Color::BLACK);
+	draw.DrawString(0.0f, 40.0f * (0 + 1), 2.0f, Color::WHITE, "vel1(x:%f,y:%f,z:%f)",
+					playerObject.vel.x, playerObject.vel.y, playerObject.vel.z);
+	draw.DrawString(0.0f, 40.0f * (1 + 1), 2.0f, Color::WHITE, "mass1:%f", playerObject.mass);
+	draw.DrawString(0.0f, 40.0f * (2 + 1), 2.0f, Color::WHITE, "vel2(x:%f,y:%f,z:%f)",
+					cubeObject.vel.x, cubeObject.vel.y, cubeObject.vel.z);
+	draw.DrawString(0.0f, 40.0f * (3 + 1), 2.0f, Color::WHITE, "mass2:%f", cubeObject.mass);
 #endif // _DEBUG
 
 	// ループの終了処理

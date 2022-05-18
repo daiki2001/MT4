@@ -2,9 +2,9 @@
 
 namespace
 {
-void ClosestPtPoint2Triangle(const EngineMath::Vector3& point, const Triangle& triangle, EngineMath::Vector3* closest)
+void ClosestPtPoint2Triangle(const Engine::Math::Vector3& point, const Triangle& triangle, Engine::Math::Vector3* closest)
 {
-	using namespace EngineMath;
+	using namespace Engine::Math;
 
 	// pointがp0の外側の頂点領域の中にあるかどうかチェック
 	Vector3 p0_p1 = triangle.p1 - triangle.p0;
@@ -95,7 +95,7 @@ bool IsSphereToSphereCollision(const Sphere& sphere1, const Sphere& sphere2, Vec
 		{
 			// Aの半径が0の時座標はBの中心 Bの半径が0の時座標はAの中心 となるよう補完
 			float t = sphere2.radius / (sphere1.radius + sphere2.radius);
-			*inter = EngineMath::Lerp(sphere1.center, sphere2.center, t);
+			*inter = Engine::Math::Lerp(sphere1.center, sphere2.center, t);
 		}
 	}
 
@@ -116,7 +116,7 @@ bool IsSphereToPlaneCollision(const Sphere& sphere, const Plane& plane)
 
 bool IsSphereToTriangleCollision(const Sphere& sphere, const Triangle& triangle)
 {
-	Vector3 p;
+	Vector3 p = {};
 	ClosestPtPoint2Triangle(sphere.center, triangle, &p);
 	Vector3 v = p - sphere.center;
 
@@ -203,7 +203,7 @@ bool IsRayToTriangleCollision(const Ray& ray, const Triangle& triangle, float* d
 {
 	// 三角形が乗っている平面を算出
 	Plane plane;
-	Vector3 interPlane;
+	Vector3 interPlane = {};
 	plane.normal = triangle.normal;
 	plane.distance = triangle.normal.Dot(triangle.p0);
 	// レイと平面が当たって無かったら当たって無い

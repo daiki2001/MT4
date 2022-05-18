@@ -180,14 +180,15 @@ HRESULT DirectDrawing::DrawingInit()
 		&vsBlob,
 		&errorBlob);
 
-	if (FAILED(hr)) {
+	if (FAILED(hr))
+	{
 		// errorBlobからエラー内容をstring型にコピー
 		std::string errstr;
 		errstr.resize(errorBlob->GetBufferSize());
 
 		std::copy_n((char*)errorBlob->GetBufferPointer(),
-			errorBlob->GetBufferSize(),
-			errstr.begin());
+					errorBlob->GetBufferSize(),
+					errstr.begin());
 		errstr += "\n";
 		// エラー内容を出力ウィンドウに表示
 		OutputDebugStringA(errstr.c_str());
@@ -206,14 +207,15 @@ HRESULT DirectDrawing::DrawingInit()
 		&psBlob,
 		&errorBlob);
 
-	if (FAILED(hr)) {
+	if (FAILED(hr))
+	{
 		// errorBlobからエラー内容をstring型にコピー
 		std::string errstr;
 		errstr.resize(errorBlob->GetBufferSize());
 
 		std::copy_n((char*)errorBlob->GetBufferPointer(),
-			errorBlob->GetBufferSize(),
-			errstr.begin());
+					errorBlob->GetBufferSize(),
+					errstr.begin());
 		errstr += "\n";
 		// エラー内容を出力ウィンドウに表示
 		OutputDebugStringA(errstr.c_str());
@@ -255,7 +257,7 @@ HRESULT DirectDrawing::DrawingInit()
 	};
 
 	// デスクリプタテーブルの設定
-	CD3DX12_DESCRIPTOR_RANGE descRangeSRV; //デスクリプタテーブルの設定(シェーダリソース)
+	CD3DX12_DESCRIPTOR_RANGE descRangeSRV = {}; //デスクリプタテーブルの設定(シェーダリソース)
 	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
 	// ルートパラメータの設定
@@ -265,7 +267,7 @@ HRESULT DirectDrawing::DrawingInit()
 
 	CD3DX12_STATIC_SAMPLER_DESC samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0);
 
-	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
+	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc  {};
 	rootSignatureDesc.Init_1_0(
 		_countof(rootparams),
 		rootparams,
@@ -348,7 +350,7 @@ HRESULT DirectDrawing::DrawingInit()
 				blendDesc.DestBlend = D3D12_BLEND_ZERO;          //使わない
 				goto BaseBlendState;
 			default:
-			BaseBlendState:
+BaseBlendState:
 				/*共通設定*/
 				blendDesc.BlendEnable = true;                //ブレンドを有効にする
 				blendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD; //加算
@@ -406,14 +408,15 @@ HRESULT DirectDrawing::MaterialInit()
 		&vsBlob,
 		&errorBlob);
 
-	if (FAILED(hr)) {
+	if (FAILED(hr))
+	{
 		// errorBlobからエラー内容をstring型にコピー
 		std::string errstr;
 		errstr.resize(errorBlob->GetBufferSize());
 
 		std::copy_n((char*)errorBlob->GetBufferPointer(),
-			errorBlob->GetBufferSize(),
-			errstr.begin());
+					errorBlob->GetBufferSize(),
+					errstr.begin());
 		errstr += "\n";
 		// エラー内容を出力ウィンドウに表示
 		OutputDebugStringA(errstr.c_str());
@@ -432,14 +435,15 @@ HRESULT DirectDrawing::MaterialInit()
 		&psBlob,
 		&errorBlob);
 
-	if (FAILED(hr)) {
+	if (FAILED(hr))
+	{
 		// errorBlobからエラー内容をstring型にコピー
 		std::string errstr;
 		errstr.resize(errorBlob->GetBufferSize());
 
 		std::copy_n((char*)errorBlob->GetBufferPointer(),
-			errorBlob->GetBufferSize(),
-			errstr.begin());
+					errorBlob->GetBufferSize(),
+					errstr.begin());
 		errstr += "\n";
 		// エラー内容を出力ウィンドウに表示
 		OutputDebugStringA(errstr.c_str());
@@ -481,7 +485,7 @@ HRESULT DirectDrawing::MaterialInit()
 	};
 
 	// デスクリプタテーブルの設定
-	CD3DX12_DESCRIPTOR_RANGE descRangeSRV; //デスクリプタテーブルの設定(シェーダリソース)
+	CD3DX12_DESCRIPTOR_RANGE descRangeSRV = {}; //デスクリプタテーブルの設定(シェーダリソース)
 	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
 	// ルートパラメータの設定
@@ -492,7 +496,7 @@ HRESULT DirectDrawing::MaterialInit()
 
 	CD3DX12_STATIC_SAMPLER_DESC samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0);
 
-	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
+	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Init_1_0(
 		_countof(rootparams),
 		rootparams,
@@ -576,7 +580,7 @@ HRESULT DirectDrawing::MaterialInit()
 				materialBlendDesc.DestBlend = D3D12_BLEND_ZERO;          //使わない
 				goto MaterialBaseBlend;
 			default:
-			MaterialBaseBlend:
+MaterialBaseBlend:
 				/*共通設定*/
 				materialBlendDesc.BlendEnable = true;                //ブレンドを有効にする
 				materialBlendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD; //加算
@@ -635,14 +639,15 @@ HRESULT DirectDrawing::SpriteDrawingInit()
 		&vsBlob,
 		&errorBlob);
 
-	if (FAILED(hr)) {
+	if (FAILED(hr))
+	{
 		// errorBlobからエラー内容をstring型にコピー
 		std::string errstr;
 		errstr.resize(errorBlob->GetBufferSize());
 
 		std::copy_n((char*)errorBlob->GetBufferPointer(),
-			errorBlob->GetBufferSize(),
-			errstr.begin());
+					errorBlob->GetBufferSize(),
+					errstr.begin());
 		errstr += "\n";
 		// エラー内容を出力ウィンドウに表示
 		OutputDebugStringA(errstr.c_str());
@@ -661,14 +666,15 @@ HRESULT DirectDrawing::SpriteDrawingInit()
 		&psBlob,
 		&errorBlob);
 
-	if (FAILED(hr)) {
+	if (FAILED(hr))
+	{
 		// errorBlobからエラー内容をstring型にコピー
 		std::string errstr;
 		errstr.resize(errorBlob->GetBufferSize());
 
 		std::copy_n((char*)errorBlob->GetBufferPointer(),
-			errorBlob->GetBufferSize(),
-			errstr.begin());
+					errorBlob->GetBufferSize(),
+					errstr.begin());
 		errstr += "\n";
 		// エラー内容を出力ウィンドウに表示
 		OutputDebugStringA(errstr.c_str());
@@ -700,7 +706,7 @@ HRESULT DirectDrawing::SpriteDrawingInit()
 	};
 
 	// デスクリプタテーブルの設定
-	CD3DX12_DESCRIPTOR_RANGE descRangeSRV; //デスクリプタテーブルの設定(シェーダリソース)
+	CD3DX12_DESCRIPTOR_RANGE descRangeSRV = {}; //デスクリプタテーブルの設定(シェーダリソース)
 	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
 	// ルートパラメータの設定
@@ -710,7 +716,7 @@ HRESULT DirectDrawing::SpriteDrawingInit()
 
 	CD3DX12_STATIC_SAMPLER_DESC samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0);
 
-	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
+	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Init_1_0(
 		_countof(rootparams),
 		rootparams,
@@ -787,7 +793,7 @@ HRESULT DirectDrawing::SpriteDrawingInit()
 			spriteBlendDesc.DestBlend = D3D12_BLEND_ZERO;          //使わない
 			goto SpriteBaseBlend;
 		default:
-		SpriteBaseBlend:
+SpriteBaseBlend:
 			/*共通設定*/
 			spriteBlendDesc.BlendEnable = true;                //ブレンドを有効にする
 			spriteBlendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD; //加算
@@ -1035,7 +1041,7 @@ void DirectDrawing::UpdataConstant(
 	}
 
 	using namespace DirectX;
-	using namespace EngineMath;
+	using namespace Engine::Math;
 
 	bool dirtyFlag = false; //ダーティフラグ
 
