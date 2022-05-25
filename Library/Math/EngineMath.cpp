@@ -15,19 +15,24 @@ bool operator!=(const DirectX::XMFLOAT4& a, const DirectX::XMFLOAT4& b)
 	return !(a == b);
 }
 
-int ConservationOfMomentum(Vector3* vel1, const float mass1, Vector3* vel2, const float mass2)
+int CollisionPhysics(MathObject* obj1, MathObject* obj2)
 {
-	if (mass1 <= 0.0f || mass2 <= 0.0f)
+	if (obj1->mass <= 0.0f || obj2->mass <= 0.0f)
 	{
 		return EF;
 	}
 
-	//float rate = mass1 / mass2;
-	Vector3 keepVel1 = *vel1;
-	Vector3 keepVel2 = *vel2;
+	Vector3 keepVel1 = { 0.0f, 0.0f, 0.0f };
+	Vector3 keepVel2 = { 0.0f, 0.0f, 0.0f };
+	keepVel1 = (obj1->vel * (obj1->mass - obj2->mass) + (2 * obj2->vel * obj2->mass)) / (obj1->mass + obj2->mass);
+	keepVel2 = (obj2->vel * (obj2->mass - obj1->mass) + (2 * obj1->vel * obj1->mass)) / (obj1->mass + obj2->mass);
 
-	*vel1 += (keepVel2 * mass2 - keepVel1 * mass1) / mass1;
-	*vel2 += (keepVel1 * mass1 - keepVel2 * mass2) / mass2;
+	float restitution = (obj1->restitution + obj2->restitution) / 2;
+	keepVel1 *= restitution;
+	keepVel2 *= restitution;
+
+	obj1->vel = keepVel1;
+	obj2->vel = keepVel2;
 
 	return 0;
 }
